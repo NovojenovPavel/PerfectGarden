@@ -1,5 +1,7 @@
+import turtle
 import turtle as t
 import random
+from tkinter import *
 
 
 length = 10
@@ -26,7 +28,9 @@ wood_colours = [
 
 # Thick
 start_thick = 16
+mutation_wood_thick = 0.3
 leaf_thick = 10
+mutation_leaf_thick = 0.5
 
 
 def draw(command):
@@ -48,13 +52,13 @@ def draw(command):
                 if randintvalue(0, 100) > 50:
                     t.forward(length)
             case "0":
-                t.pensize(leaf_thick)
-                t.pencolor(leaf_colours[randintvalue(0,2)])
+                t.pensize(leaf_thick+mutation(leaf_thick, mutation_leaf_thick))
+                t.pencolor(leaf_colours[randintvalue(0, len(leaf_colours)-1)])
                 t.forward(length+mutation(length, mutation_len_scale))
-                t.pencolor(wood_colours[randintvalue(0,2)])
+                t.pencolor(wood_colours[randintvalue(0, len(wood_colours)-1)])
                 t.pensize(thick)
             case "[":
-                thick *= 0.75
+                thick = (thick * 0.75) + mutation(thick, mutation_wood_thick)
                 t.pensize(thick)
                 stack.append(thick)
                 stack.append(t.xcor())
@@ -72,7 +76,7 @@ def draw(command):
                 t.right(angle+mutation(angle, mutation_angle_scale))
     t.hideturtle()
     t.update()
-    t.mainloop()
+
 
 
 def create(i, axiom):
@@ -81,15 +85,25 @@ def create(i, axiom):
         for el in axiom:
             if el in translate:
                 axiomtp += translate[el]
-            else: axiomtp += el
+            else:
+                axiomtp += el
         axiom = axiomtp
     return axiom
+
+
+def savepicture(lable):
+    ts = turtle.getscreen()
+    seed = create(depth, "0")
+    print(seed)
+    draw(seed)
+    ts.getcanvas().postscript(file=lable+".eps")
 
 
 def makepicture():
     seed = create(depth, "0")
     print(seed)
     draw(seed)
+    t.mainloop()
 
 
 def mutation(value, scale):
